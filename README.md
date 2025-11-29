@@ -13,6 +13,23 @@ A web-based interactive map tool that allows users to search, draw, toggle layer
 ✔ Zoom controls and custom attribution
 ✔ Fully client-side — no backend required
 
+📍 Map Library Choice
+
+I selected Leaflet as the mapping library for this project because it provides an optimal balance of flexibility, performance, and ease of integration with React. Leaflet is lightweight (~40KB), open-source, and widely adopted in the geospatial development community, making it a strong fit for browser-based mapping applications.
+
+Why I Selected Leaflet
+
+Free and Open-Source: Unlike many commercial mapping solutions, Leaflet does not require API keys, paid subscription plans, or usage credits.
+
+Strong Ecosystem for Drawing & Editing: Plugins like leaflet-draw and react-leaflet-editable make it easy to support freehand and polygon drawing — one of the core requirements of this challenge.
+
+Performance Optimized For Rendering Geometries: Leaflet efficiently handles multiple layers, large polygons, markers, and live interactions without lag.
+
+React Compatibility: Using react-leaflet, Leaflet integrates naturally with React’s component-based architecture, reducing boilerplate and improving maintainability.
+
+Customizable: The styling options, tile provider flexibility (OSM, Esri, custom satellite tiles), and support for GeoJSON make it adaptable for GIS-style workflows.
+
+
 🧪 Test Suite (Playwright)
 
 This project includes 3 Playwright end-to-end tests focusing on core interactions:
