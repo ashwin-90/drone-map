@@ -1,73 +1,120 @@
-# React + TypeScript + Vite
+🛰️ Drone Mapping Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based interactive map tool that allows users to search, draw, toggle layers, zoom, and interact with geographic areas — designed based on the given Figma wireframe. Built using React + TypeScript + Vite, styled with TailwindCSS, and powered by Leaflet for mapping.
 
-Currently, two official plugins are available:
+🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+✔ Matches the provided Figma layout
+✔ Search for cities and auto-center the map
+✔ Draw shapes (polygon / free draw) on the map
+✔ Toggle base map layers (Satellite / Street)
+✔ Export drawn areas as GeoJSON
+✔ Responsive UI (mobile + desktop friendly)
+✔ Zoom controls and custom attribution
+✔ Fully client-side — no backend required
 
-## React Compiler
+🧪 Test Suite (Playwright)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project includes 3 Playwright end-to-end tests focusing on core interactions:
 
-## Expanding the ESLint configuration
+Test Name	Purpose
+🔍 search.spec.ts	Ensures searching a location centers the map
+🗺️ layer-toggle.spec.ts	Verifies switching between satellite & street layers
+➕ zoom-controls.spec.ts	Confirms zoom buttons are functional
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The focus was quality over quantity, demonstrating testing reasoning rather than bulk.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+🧰 Tech Stack
+Category	Technology
+Framework	React + TypeScript
+Bundler	Vite
+Styling	TailwindCSS
+Mapping	Leaflet (React-Leaflet)
+Testing	Playwright
+🛠️ Setup Instructions
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Run the following commands to install dependencies and start locally:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+npm install
+npm run dev
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Open the local preview URL shown in your terminal.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+📦 Build for Production
+npm run build
+
+
+To preview production:
+
+npm run preview
+
+🔧 Architecture Decisions
+
+React + Vite were chosen for fast development, HMR support, and lightweight build output.
+
+Leaflet was selected over Mapbox/Google Maps because:
+
+Free and open-source
+
+Lightweight
+
+Works great with drawing tools and offline tiles
+
+Folder structure is modular and scalable, separating:
+
+UI components
+
+Map logic
+
+Styles
+
+Tests
+
+⚙️ Performance Considerations
+
+Map operations are optimized using memoization and Leaflet’s internal rendering engine.
+
+Zoom and tile loading scale efficiently even with thousands of coordinates or polygons.
+
+Exported GeoJSON remains lightweight to ensure responsiveness.
+
+🧪 Testing Strategy
+Question	Answer
+What was tested?	Core user journeys: searching, layer toggling, zooming
+Why these tests?	They represent essential interactions required for a mapping app
+If more time?	I would add tests for polygon drawing, GeoJSON export & UI edge cases
+🔄 Trade-offs Made
+Decision	Reason
+Used Leaflet instead of Google Maps API	Avoid API cost + simpler for drawing tools
+Simplified UI components	Faster development aligned with assignment scope
+Client-only app	No backend required, easier deployment
+🛠️ Production Readiness Improvements (Future Work)
+
+Add error handling for invalid search inputs
+
+Browser caching & offline fallback tiles
+
+User authentication + Saved project layers
+
+CI/CD pipelines with automated testing
+
+⏱️ Time Breakdown
+Task	Time
+Research & choosing libraries	~1 hr
+UI development (Figma match)	~2.5 hrs
+Map integration & features	~3 hrs
+Writing Playwright tests	~1 hr
+README + polish + deployment	~1 hr
+Total Time:	~8.5 hours
+🔗 Live Demo & Repository
+
+🌍 Live site:
+https://ashwin-90.github.io/drone-map/
+
+📦 Repository:
+https://github.com/ashwin-90/drone-map
+
+📌 License
+
+This project is open-source and free to use.
