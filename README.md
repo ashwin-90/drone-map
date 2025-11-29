@@ -110,7 +110,7 @@ Total Time:	~8.5 hours
 🔗 Live Demo & Repository
 
 🌍 Live site:
-https://ashwin-90.github.io/drone-map/
+https://drone-map-one.vercel.app/
 
 📦 Repository:
 https://github.com/ashwin-90/drone-map
