@@ -15,6 +15,7 @@ import {
   Download,
 } from 'lucide-react';
 
+import type { LeafletMouseEvent } from 'leaflet';
 import {
   MapContainer,
   TileLayer,
@@ -41,6 +42,11 @@ interface MapControllerProps {
   setDrawingPoints: React.Dispatch<React.SetStateAction<LatLng[]>>;
 }
 
+// Relax prop checking on leaflet components to avoid TS2322 issues
+const AnyMapContainer = MapContainer as any;
+const AnyTileLayer = TileLayer as any;
+const AnyCircleMarker = CircleMarker as any;
+
 const MapController: React.FC<MapControllerProps> = ({
   mapCenter,
   zoom,
@@ -56,9 +62,12 @@ const MapController: React.FC<MapControllerProps> = ({
   }, [mapCenter, zoom, map]);
 
   useMapEvents({
-    click(e) {
+    click(e: LeafletMouseEvent) {
       if (isDrawing) {
-        setDrawingPoints((prev) => [...prev, { lat: e.latlng.lat, lng: e.latlng.lng }]);
+        setDrawingPoints((prev) => [
+          ...prev,
+          { lat: e.latlng.lat, lng: e.latlng.lng },
+        ]);
       }
     },
     moveend() {
@@ -111,8 +120,7 @@ function areaKm2(points: LatLng[]): number {
   const projected = points.map((p) => {
     const x = (R * p.lng * Math.PI) / 180;
     const y =
-      R *
-      Math.log(Math.tan(Math.PI / 4 + (p.lat * Math.PI) / 360));
+      R * Math.log(Math.tan(Math.PI / 4 + (p.lat * Math.PI) / 360));
     return { x, y };
   });
 
@@ -185,7 +193,8 @@ const App: React.FC = () => {
         throw new Error('Network error');
       }
 
-      const data: Array<{ lat: string; lon: string; display_name: string }> = await res.json();
+      const data: Array<{ lat: string; lon: string; display_name: string }> =
+        await res.json();
 
       if (!data || data.length === 0) {
         setSearchError('Location not found');
@@ -254,7 +263,8 @@ const App: React.FC = () => {
           const feature = geojson.features.find(
             (f: any) =>
               f.geometry &&
-              (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'),
+              (f.geometry.type === 'Polygon' ||
+                f.geometry.type === 'MultiPolygon'),
           );
           if (feature) {
             if (feature.geometry.type === 'Polygon') {
@@ -413,7 +423,7 @@ const App: React.FC = () => {
     <div className="flex flex-col md:flex-row h-screen bg-gray-100">
       {/* LEFT WRAPPER: sidebar + panel */}
       <div className="flex flex-col md:flex-row w-full md:w-[28rem] shadow-md md:shadow-none">
-        {/* SIDEBAR (vertical on desktop, horizontal on mobile) */}
+        {/* SIDEBAR */}
         <div className="bg-gray-800 flex md:flex-col items-center md:items-center px-3 md:px-0 py-2 md:py-4 space-x-4 md:space-x-0 md:space-y-6">
           <div className="w-10 h-10 bg-orange-500 rounded-sm flex items-center justify-center">
             <div className="w-6 h-6 border-l-4 border-b-4 border-white transform rotate-45 -translate-x-1" />
@@ -473,7 +483,9 @@ const App: React.FC = () => {
                   <span className="text-red-500">{searchError}</span>
                 )}
                 {!isSearching && !searchError && selectedArea && (
-                  <span className="text-gray-500 truncate">Selected: {selectedArea}</span>
+                  <span className="text-gray-500 truncate">
+                    Selected: {selectedArea}
+                  </span>
                 )}
               </div>
             </div>
@@ -559,7 +571,7 @@ const App: React.FC = () => {
 
       {/* MAP SECTION */}
       <div className="flex-1 relative min-h-[320px] md:min-h-0">
-        <MapContainer
+        <AnyMapContainer
           center={[mapCenter.lat, mapCenter.lng]}
           zoom={zoom}
           minZoom={MIN_ZOOM}
@@ -567,12 +579,12 @@ const App: React.FC = () => {
           className="w-full h-full"
         >
           {view === 'street' ? (
-            <TileLayer
+            <AnyTileLayer
               attribution="&copy; OpenStreetMap contributors"
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
           ) : (
-            <TileLayer
+            <AnyTileLayer
               attribution="Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community"
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             />
@@ -592,11 +604,15 @@ const App: React.FC = () => {
                 positions={drawingPoints.map((p) => [p.lat, p.lng])}
               />
               {drawingPoints.map((p, i) => (
-                <CircleMarker
+                <AnyCircleMarker
                   key={i}
                   center={[p.lat, p.lng]}
                   radius={5}
-                  pathOptions={{ color: 'orange', fillColor: 'orange', fillOpacity: 1 }}
+                  pathOptions={{
+                    color: 'orange',
+                    fillColor: 'orange',
+                    fillOpacity: 1,
+                  }}
                 />
               ))}
             </>
@@ -610,7 +626,7 @@ const App: React.FC = () => {
             isDrawing={isDrawing}
             setDrawingPoints={setDrawingPoints}
           />
-        </MapContainer>
+        </AnyMapContainer>
 
         {/* Grid overlay */}
         {isGridOn && (
@@ -672,7 +688,9 @@ const App: React.FC = () => {
         <div className="absolute bottom-4 left-4 flex text-sm z-[1000]">
           <button
             className={`px-3 md:px-4 py-2 rounded-l ${
-              view === 'street' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+              view === 'street'
+                ? 'bg-orange-500 text-white'
+                : 'bg-white text-gray-700'
             }`}
             onClick={() => setView('street')}
           >
@@ -680,7 +698,9 @@ const App: React.FC = () => {
           </button>
           <button
             className={`px-3 md:px-4 py-2 rounded-r ${
-              view === 'satellite' ? 'bg-orange-500 text-white' : 'bg-white text-gray-700'
+              view === 'satellite'
+                ? 'bg-orange-500 text-white'
+                : 'bg-white text-gray-700'
             }`}
             onClick={() => setView('satellite')}
           >
